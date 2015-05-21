@@ -1,0 +1,21 @@
+[
+	"Three.js",
+	"math/Color.js",
+	"math/Quaternion.js",
+	"math/Vector2.js",
+	"math/Vector3.js",
+	"math/Vector4.js",
+	"math/Euler.js",
+	"math/Line3.js",
+	"math/Box2.js",
+	"math/Box3.js",
+	"math/Matrix3.js",
+	"math/Matrix4.js",
+	"math/Ray.js",
+	"math/Sphere.js",
+	"math/Frustum.js",
+	"math/Plane.js",
+	"math/Math.js",
+	"math/Spline.js",
+	"math/Triangle.js"
+]
