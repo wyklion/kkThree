@@ -1,0 +1,20 @@
+{
+  "project_type": "javascript",
+  "debugMode" : 1,
+  "showFPS" : false,
+  "frameRate" : 60,
+  "id" : "WebGL-output",
+  "renderMode" : 0,
+  "engineDir":"kkframe",
+  "modules" : ["common", "extras"],
+
+  "jsList" : [
+    "libs/hammer.js",
+    "libs/stats.js",
+    "libs/dat.gui.js",
+    "libs/OrbitControls.js",
+    "libs/tween.min.js",
+
+    "src/playScene.js"
+  ]
+}

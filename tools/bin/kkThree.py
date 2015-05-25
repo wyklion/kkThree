@@ -71,7 +71,7 @@ class Cocos2dIniParser:
         return path
 
     def get_cocos2dx_path(self):
-        cocos2d_x = self._cp.get('paths', 'cocos2d_x')
+        cocos2d_x = self._cp.get('paths', 'kkThree')
         cocos2d_x = self._sanitize_path(cocos2d_x)
         return cocos2d_x
 
@@ -238,7 +238,7 @@ class KKPlugin(object):
         path = cls.get_console_path()
         path = os.path.abspath(path)
         cocos2dx_path = os.path.abspath(os.path.join(
-            path, os.path.pardir, os.path.pardir, os.path.pardir))
+            path, os.path.pardir, os.path.pardir))
         if os.path.isdir(cocos2dx_path):
             return cocos2dx_path
 
@@ -273,7 +273,7 @@ class KKPlugin(object):
         # 2: Path defined by walking the cocos2d path
         #
         path = cls.get_cocos2d_path()
-
+        print(path)
         if path is not None:
             # Try one: cocos2d-x/templates (assuming it is using cocos2d-x's setup.py)
             # Try two: cocos2d-x/../../templates
@@ -297,7 +297,7 @@ class KKPlugin(object):
             paths.append(user_path)
 
         if len(paths) == 0:
-            raise CCPluginError("Template path not found")
+            raise KKPluginError("Template path not found")
 
         # remove duplicates
         ordered = OrderedDict.fromkeys(paths)
