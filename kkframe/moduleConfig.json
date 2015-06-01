@@ -85,7 +85,7 @@
       "scenes/Scene.js",
       "scenes/Fog.js",
       "scenes/FogExp2.js",
-      "renderers/shaders/shaderChunk.js",
+      "renderers/shaders/shaderChunkGLSL.js",
       "renderers/shaders/UniformsUtils.js",
       "renderers/shaders/UniformsLib.js",
       "renderers/shaders/ShaderLib.js",
@@ -98,7 +98,13 @@
       "renderers/webgl/WebGLState.js",
       "renderers/webgl/plugins/LensFlarePlugin.js",
       "renderers/webgl/plugins/ShadowMapPlugin.js",
-      "renderers/webgl/plugins/SpritePlugin.js"
+      "renderers/webgl/plugins/SpritePlugin.js",
+      "base/KKCommon.js",
+      "base/KKClass.js",
+      "event/hammer.js",
+      "event/KKEvent.js",
+      "event/KKEventListener.js",
+      "event/KKEventManager.js"
     ],
     "extras" : [
       "extras/GeometryUtils.js",

@@ -9,12 +9,16 @@
   "modules" : ["common", "extras"],
 
   "jsList" : [
-    "libs/hammer.js",
     "libs/stats.js",
     "libs/dat.gui.js",
     "libs/OrbitControls.js",
+    "libs/ColladaLoader.js",
     "libs/tween.min.js",
+    "libs/MTLLoader.js",
+    "libs/OBJLoader.js",
+    "libs/OBJMTLLoader.js",
 
+    "src/cubeManager.js",
     "src/playScene.js"
   ]
 }

@@ -6,7 +6,6 @@ var camera;
 var scene;
 var renderer;
 var controls;
-var hammer;
 
 kk.game.onStart = function(){
     var stats = initStats();
@@ -17,12 +16,20 @@ kk.game.onStart = function(){
     //document.addEventListener('ontouchstart',onDocumentMouseDown,false);
     //document.addEventListener('ontouchend',onDocumentMouseMove,false);
     //document.addEventListener('ontouchmove',onDocumentMouseUp,false);
+    var listener1 = kk.EventListener.create({
+        event: kk.EventListener.TOUCH,
+        swallowTouches: true,                       // 设置是否吞没事件，在 onTouchBegan 方法返回 true 时吞没
+        onTap: function (e) {     //实现 onTouchBegan 事件回调函数
+            onTap({x:e.center.x, y:e.center.y});
+        }
+    });
+    kk.eventManager.addListener(listener1);
 
-    hammer = new Hammer(document.getElementById("WebGL-output"));
-    hammer.on("tap", function (e) {
+    /*
+    kk.hammer.on("tap", function (e) {
         //console.log(e.center);
         onTap({x:e.center.x, y:e.center.y});
-    });
+    });*/
 
     createGUI();
     var playScene = new PlayScene();

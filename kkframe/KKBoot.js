@@ -990,6 +990,7 @@ kk.game = {
             }
             self._checkPrepare = setInterval(function () {
                 if (self._prepared) {
+                    self.init();
                     self.onStart();
                     clearInterval(self._checkPrepare);
                 }
@@ -1001,6 +1002,14 @@ kk.game = {
                 this.removeEventListener('load', arguments.callee, false);
                 _run();
             }, false);
+    },
+    init:function(){
+        kk.hammer = new Hammer(document.getElementById(kk.game.config["id"]));
+        kk.hammer.on("tap", function (e) {
+            var touchEvent = new kk.EventTouch(e);
+            touchEvent._eventCode = kk.EventTouch.EventCode.TAP;
+            kk.eventManager.dispatchEvent(touchEvent);
+        });
     },
     _initConfig: function () {
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
@@ -1069,7 +1078,7 @@ kk.game = {
         self._prepareCalled = true;
 
         var jsList = config[CONFIG_KEY.jsList] || [];
-        if (0) {//is single file
+        if (typeof(THREE) != "undefined") {//is single file
             //load user's jsList only
             loader.loadJsWithImg("", jsList, function (err) {
                 if (err) throw err;

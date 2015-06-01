@@ -6,141 +6,6 @@ var ROW_NUM = 8;
 var COL_NUM = 28;
 var CUBE_LENGTH = 2;
 
-var CubeManager = function(scene){
-    this.scene = scene;
-    this.cubes = new Array();
-    for(var r=0;r<ROW_NUM;r++)
-        for(var c=0;c<COL_NUM;c++){
-            this.cubes[r*COL_NUM+c]={
-                flag:2,
-                obj:null,
-                color:0
-            }
-        }
-};
-
-CubeManager.prototype = {
-    constructor: CubeManager,
-    setCube:function(idx,obj,color){
-        this.cubes[idx] = {
-            obj:obj,
-            color:color,
-            flag:0
-        };
-    },
-    clear:function(){ this.cubes = new Array(); },
-    breakCube:function(idx){
-        //console.log("break:",this.cubes[idx]);
-
-        this.checkCount = 0;
-        this.checkAroundSameColorCube(this, this.cubes[idx].color, idx);
-        if(this.checkCount >= 3){
-            this.removeSameColor();
-            this.dropDownCubes();
-            //console.log("check other...");
-            if(!this.anyBreakChance()){
-                //console.log("no break any more...");
-                this.scene.createCubes();
-            }
-            else
-                ;//console.log("has break chance...");
-        }
-        else
-            this.clearFlag();
-    },
-    anyBreakChance:function(){
-        for(var i = 1; i < this.cubes.length;i++){
-            if(this.cubes[i].flag != 1){
-                this.checkCount = 0;
-                this.checkAroundSameColorCube(this, this.cubes[i].color, i);
-                if(this.checkCount >= 3){
-                    this.clearFlag();
-                    return true;
-                }
-            }
-        }
-        this.clearFlag();
-        return false;
-    },
-    clearFlag:function(){
-        for(var i = 0; i < this.cubes.length;i++){
-            if(this.cubes[i].flag == 1)
-                this.cubes[i].flag = 0;
-        }
-    },
-    removeCube:function(idx){
-        //console.log("remove:", Math.floor(idx / COL_NUM), idx%COL_NUM,this.cubes[idx]);
-        if(this.cubes[idx].obj!=null){
-            this.cubes[idx].obj.parent.remove(this.cubes[idx].obj);
-            this.cubes[idx].obj = null;
-        }
-        this.cubes[idx].flag = 2;
-    },
-    removeSameColor:function(){
-        for(var i = 0; i < this.cubes.length;i++){
-            if(this.cubes[i].flag == 1) {
-                this.removeCube(i)
-            }
-        }
-    },
-    dropDownCubes:function(){
-        for(var c = 0; c < COL_NUM; c++){
-            for(var r = 1; r < ROW_NUM;r++){
-                if(this.cubes[r*COL_NUM+c].flag==0) {
-                    var down = r - 1;
-                    while (down > 0 && this.cubes[down * COL_NUM + c].flag == 2) {
-                        down = down - 1;
-                    }
-                    if (down == 0 && this.cubes[down * COL_NUM + c].flag == 2)
-                        this.moveCube(r * COL_NUM + c, c);
-                    else if (down < r - 1) {
-                        this.moveCube(r * COL_NUM + c, (down + 1) * COL_NUM + c);
-                    }
-                }
-            }
-        }
-    },
-    moveCube:function(from,to){
-        /*
-        var r = Math.floor(from / COL_NUM);
-        var c = from%COL_NUM;
-        var r2 = Math.floor(to / COL_NUM);
-        var c2 = to%COL_NUM;
-        console.log(from,r,c,to,r2,c2);
-        if(this.cubes[from].obj==null)
-            console.log("from:",this.cubes[from],"to:",this.cubes[to]);*/
-
-        this.cubes[to].obj = this.cubes[from].obj;
-        this.cubes[to].obj.idx = to;
-        this.cubes[to].color = this.cubes[from].color;
-        this.cubes[to].flag = 0;
-        this.cubes[from].obj = null;
-        this.cubes[from].flag = 2;
-        var r = (from-to)/COL_NUM;
-        this.cubes[to].obj.position.y = this.cubes[to].obj.position.y - r*(CUBE_LENGTH*1.1);
-    },
-    checkAroundSameColorCube:function(scope, color, idx){
-        var r = Math.floor(idx / COL_NUM);
-        var c = idx%COL_NUM;
-        if(this.cubes[idx].flag != 0)
-            return;
-        if(this.cubes[idx].color != color) return;
-        //console.log("check idx:",r,c, "color:",this.cubes[idx].color);
-        this.cubes[idx].flag = 1;
-        scope.checkCount++;
-        var x = r + 1;
-        if(x<ROW_NUM)
-            this.checkAroundSameColorCube(scope, color, x*COL_NUM+c);
-        x = r - 1;
-        if(x>=0)
-            this.checkAroundSameColorCube(scope, color, x*COL_NUM+c);
-        x = (c + COL_NUM - 1)%COL_NUM;
-        this.checkAroundSameColorCube(scope, color, r*COL_NUM+x);
-        x = (c + 1)%COL_NUM;
-        this.checkAroundSameColorCube(scope, color, r*COL_NUM+x);
-    }
-}
-
 var PlayScene = function(){
 };
 
@@ -151,7 +16,7 @@ PlayScene.prototype = {
         // create a scene, that will hold all our elements such as objects, cameras and lights.
         scene = new THREE.Scene();
         //scene.fog=new THREE.FogExp2( 0xffffff, 0.015 );
-        scene.fog = new THREE.Fog(0xffffff, 0.005, 200);
+        //scene.fog = new THREE.Fog(0xddbbaa, 0.005, 300);
         //scene.overrideMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
 
         // create a camera, which defines where we're looking at.
@@ -159,9 +24,10 @@ PlayScene.prototype = {
 
         // create a render and set the size
         renderer = new THREE.WebGLRenderer();
-        renderer.setClearColor(new THREE.Color(0xeeeeee));
+        renderer.setClearColor(new THREE.Color(0xaaaaaa));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMapEnabled = true;
+        //renderer.shadowMapType = THREE.PCFShadowMap;
 
         // position and point the camera to the center of the scene
         camera.position.x = 0;
@@ -172,16 +38,16 @@ PlayScene.prototype = {
         this.orbitControls = new THREE.OrbitControls(camera);
         this.orbitControls.center.y = 10;
         this.orbitControls.userPan = false;
-        this.orbitControls.fixedUpDown = true;
+        //this.orbitControls.fixedUpDown = true;
         //this.orbitControls.autoRotate = true;
         var scope = this;
 
-        hammer.on("panstart", function (e) {
+        kk.hammer.on("panstart", function (e) {
             //console.log("panstart");
             scope.orbitControls.dispatchEvent({type:"panstart",
                 x: e.center.x,y: e.center.y});
         });
-        hammer.on("pan", function (e) {
+        kk.hammer.on("pan", function (e) {
             //console.log(e);
             scope.orbitControls.dispatchEvent({type:"pan",
                 x: e.center.x,y: e.center.y,deltaX: e.deltaX, deltaY: e.deltaY});
@@ -197,18 +63,24 @@ PlayScene.prototype = {
         //this.trackballControls.staticMoving = true;
         //this.trackballControls.dynamicDampingFactor=0.3;*/
 
-        var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+        var ambientLight = new THREE.AmbientLight(0x555555);
         scene.add(ambientLight);
 
-        // add spotlight for the shadows
-        this.spotLight = new THREE.SpotLight(0xaa3333);
-        this.spotLight.position.set(100, 0, 100);
-        this.spotLight.intensity = 0.5;
-        scene.add(this.spotLight);
-        this.spotLight2 = new THREE.SpotLight(0x3333aa);
-        this.spotLight2.position.set(-100, 0, -100);
-        this.spotLight2.intensity = 0.5;
-        scene.add(this.spotLight2);
+        //小球光
+        var pointColor = "#ccffcc";
+        this.pointLight = new THREE.PointLight(pointColor);
+        this.pointLight.distance = 30;
+        this.pointLight.position.set(20,15,20);
+        scene.add(this.pointLight);
+        //this.pointLight.visible = false;
+        // add a small sphere simulating the pointlight
+        var sphereLight = new THREE.SphereGeometry(0.2);
+        var sphereLightMaterial = new THREE.MeshBasicMaterial({color: 0xac6c25});
+        this.sphereLightMesh = new THREE.Mesh(sphereLight, sphereLightMaterial);
+        this.sphereLightMesh.castShadow = true;
+        this.sphereLightMesh.position.set(20,15,20);
+        scene.add(this.sphereLightMesh);
+
 
         // add the output of the renderer to the html element
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
@@ -217,7 +89,62 @@ PlayScene.prototype = {
         // show axes in the screen
         var axes = new THREE.AxisHelper(20);
         scene.add(axes);
+
+        //平地
+        var floorTex = THREE.ImageUtils.loadTexture("res/brick-wall.jpg");
+        floorTex.wrapT = THREE.RepeatWrapping;
+        floorTex.wrapS = THREE.RepeatWrapping;
+        var mat = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            map: floorTex
+        });
+        var geom = new THREE.BoxGeometry(500, 500, 1, 30);
+        geom.computeVertexNormals();
+        var plane = new THREE.Mesh(geom, mat);
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.receiveShadow = true;
+        plane.material.map.repeat.set(10,10);
+        plane.material.map.needUpdate = true;
+        scene.add(plane);
+
+        /*
+        // 锥光，有阴影
+        this.spotLight = new THREE.SpotLight(0xeecccc);
+        this.spotLight.position.set(25, 50, 25);
+        this.spotLight.intensity = 1;
+        this.spotLight.castShadow = true;
+        this.spotLight.target = plane;
+        scene.add(this.spotLight);*/
+        /*
+        this.spotLight2 = new THREE.SpotLight(0xeecccc);
+        this.spotLight2.position.set(20, 30, 20);
+        this.spotLight2.intensity = 1;
+        this.spotLight2.castShadow = true;
+        this.spotLight2.target = plane;
+        scene.add(this.spotLight2);*/
+
+        //远光
+        var pointColor = "#ff5808";
+        var directionalLight = new THREE.DirectionalLight(pointColor);
+        directionalLight.position.set(25, 50, 25);
+        directionalLight.castShadow = true;
+        directionalLight.shadowCameraNear = 2;
+        directionalLight.shadowCameraFar = 100;
+        directionalLight.shadowCameraLeft = -50;
+        directionalLight.shadowCameraRight = 50;
+        directionalLight.shadowCameraTop = 50;
+        directionalLight.shadowCameraBottom = -50;
+
+        directionalLight.distance = 0;
+        directionalLight.intensity = 0.5;
+        directionalLight.shadowMapHeight = 1024;
+        directionalLight.shadowMapWidth = 1024;
+        directionalLight.target = plane;
+        directionalLight.shadowCameraVisible = true;
+        scene.add(directionalLight);
+
         // create the ground plane
+        /*
         var planeGeometry = new THREE.PlaneBufferGeometry(1000, 1000, 1, 1);
         var planeMaterial = new THREE.MeshLambertMaterial({color: 0xeb73eb});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -229,11 +156,13 @@ PlayScene.prototype = {
         plane.position.z = 0;
         // add the plane to the scene
         scene.add(plane);
+         */
 
 
         this.createCubes();
 
-        // create a sphere
+        //一个球
+        /*
         var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
         var sphereMaterial = new THREE.MeshLambertMaterial({color: 0x7777ff});
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -244,10 +173,78 @@ PlayScene.prototype = {
         sphere.position.z = 0;
         // add the sphere to the scene
         scene.add(sphere);
+        */
+
+        this.loadObj2();
 
         // call the render function
         this.step = 0;
         this.render();
+    },
+    loadObj2:function() {
+        var loader = new THREE.ColladaLoader();
+        var mesh;
+        loader.load("res/Truck_dae.dae", function (result) {
+            mesh = result.scene.children[0].children[0].clone();
+            mesh.scale.set(0.5, 0.5, 0.5);
+            mesh.position.set(20, 0, 20);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            //kk.log(mesh)
+            mesh.traverse(function(child)
+            {
+                if (child instanceof THREE.Mesh)
+                {
+                    //设置模型生成阴影并接收阴影
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            scene.add(mesh);
+        });
+    },
+    loadObj:function(){
+        var loader = new THREE.OBJMTLLoader();
+
+        loader.load('res/butterfly.obj', 'res/butterfly.mtl', function (object) {
+
+            //traverse：回调，该模型以及所有子模型均执行该函数
+            //相当于遍历obj的children数组
+            object.traverse(function(child)
+            {
+                if (child instanceof THREE.Mesh)
+                {
+                    //设置模型生成阴影并接收阴影
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+
+            /*
+            // configure the wings
+            var wing2 = object.children[5].children[0];
+            var wing1 = object.children[4].children[0];
+            wing1.castShadow = true;
+            wing2.castShadow = true;
+
+            wing1.material.opacity = 0.6;
+            //wing1.material.transparent = true;
+            //wing1.material.depthTest = false;
+            wing1.material.side = THREE.DoubleSide;
+
+            wing2.material.opacity = 0.6;
+            //wing2.material.depthTest = false;
+            //wing2.material.transparent = true;
+            wing2.material.side = THREE.DoubleSide;
+            */
+
+            object.scale.set(30, 30, 30);
+            object.position.set(10,6,15)
+            object.castShadow = true;
+            object.receiveShadow = true;
+
+            scene.add(object);
+        });
     },
     createCubes:function() {
         if (this.cubeGroup != null)
@@ -255,7 +252,7 @@ PlayScene.prototype = {
         ROW_NUM = controls.rows;
         COL_NUM = controls.cols;
         CUBE_LENGTH = controls.length;
-        this.cm = new CubeManager(this);
+        this.cm = new CubeManager(this, ROW_NUM, COL_NUM, CUBE_LENGTH);
         this.cubeGroup = new THREE.Group();
         scene.add(this.cubeGroup);
         for (var r = 0; r < ROW_NUM; r++) {
@@ -283,6 +280,7 @@ PlayScene.prototype = {
         mat.map = texture;
         var cube = new THREE.Mesh(geom, mat);
         cube.castShadow = true;
+        cube.receiveShadow = true;
         // position the cube
         cube.position.x = ( 10 * (Math.cos(angle)));
         cube.position.z = ( 10 * Math.sin(angle));
@@ -318,6 +316,7 @@ PlayScene.prototype = {
         return cube
     },
     step:0,
+    step2:0,
     render:function(){
         var delta = this.clock.getDelta();
         //this.trackballControls.update(delta);
@@ -325,10 +324,20 @@ PlayScene.prototype = {
 
         this.step+=0.02;
         if(this.step > Math.PI*2) this.step -= Math.PI*2;
+        /*
+        this.step2+=0.03;
+        if(this.step2 > Math.PI*2) this.step2 -= Math.PI*2;
         this.spotLight.position.x = 100 * (Math.cos(this.step));
         this.spotLight.position.z = 100 * (Math.sin(this.step));
         this.spotLight2.position.x = 100 * (Math.cos(Math.PI+this.step));
-        this.spotLight2.position.z = 100 * (Math.sin(Math.PI+this.step));
+        this.spotLight2.position.z = 100 * (Math.sin(Math.PI+this.step));*/
+
+        this.sphereLightMesh.position.x = 20 * (Math.cos(this.step));
+        this.sphereLightMesh.position.z = 20 * (Math.sin(this.step));
+        this.pointLight.position.x = 20 * (Math.cos(this.step));
+        this.pointLight.position.z = 20 * (Math.sin(this.step));
+        //this.pointLight.position.copy(this.sphereLightMesh.position);
+
         // rotate the cubes around its axes
         /*
          scene.traverse(function (e) {
