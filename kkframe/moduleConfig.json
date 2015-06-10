@@ -101,6 +101,8 @@
       "renderers/webgl/plugins/SpritePlugin.js",
       "base/KKCommon.js",
       "base/KKClass.js",
+      "base/KKScheduler.js",
+      "base/KKDirector.js",
       "event/hammer.js",
       "event/KKEvent.js",
       "event/KKEventListener.js",

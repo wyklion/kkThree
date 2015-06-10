@@ -967,15 +967,455 @@ kk.loader = {
     }
 };
 
+//+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
+(function () {
+    var win = window, hidden, visibilityChange, _undef = "undefined";
+    if (!kk.isUndefined(document.hidden)) {
+        hidden = "hidden";
+        visibilityChange = "visibilitychange";
+    } else if (!kk.isUndefined(document.mozHidden)) {
+        hidden = "mozHidden";
+        visibilityChange = "mozvisibilitychange";
+    } else if (!kk.isUndefined(document.msHidden)) {
+        hidden = "msHidden";
+        visibilityChange = "msvisibilitychange";
+    } else if (!kk.isUndefined(document.webkitHidden)) {
+        hidden = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
+    }
+
+    var onHidden = function () {
+        if (kk.eventManager && kk.game._eventHide)
+            kk.eventManager.dispatchEvent(kk.game._eventHide);
+    };
+    var onShow = function () {
+        if (kk.eventManager && kk.game._eventShow)
+            kk.eventManager.dispatchEvent(kk.game._eventShow);
+
+        if(kk.game._intervalId){
+            window.cancelAnimationFrame(kk.game._intervalId);
+
+            kk.game._mainLoop();
+        }
+    };
+
+    if (hidden) {
+        kk._addEventListener(document, visibilityChange, function () {
+            if (document[hidden]) onHidden();
+            else onShow();
+        }, false);
+    } else {
+        kk._addEventListener(win, "blur", onHidden, false);
+        kk._addEventListener(win, "focus", onShow, false);
+    }
+
+    if(navigator.userAgent.indexOf("MicroMessenger") > -1){
+        win.onfocus = function(){ onShow() };
+    }
+
+    if ("onpageshow" in window && "onpagehide" in window) {
+        kk._addEventListener(win, "pagehide", onHidden, false);
+        kk._addEventListener(win, "pageshow", onShow, false);
+    }
+    win = null;
+    visibilityChange = null;
+})();
+
+//+++++++++++++++++++++++++something about sys begin+++++++++++++++++++++++++++++
+kk._initSys = function () {
+    /**
+     * System variables
+     * @namespace
+     * @name cc.sys
+     */
+    kk.sys = {};
+    var sys = kk.sys;
+
+    /**
+     * @memberof cc.sys
+     * @name OS_IOS
+     * @constant
+     * @type {string}
+     */
+    sys.OS_IOS = "iOS";
+    /**
+     * @memberof cc.sys
+     * @name OS_ANDROID
+     * @constant
+     * @type {string}
+     */
+    sys.OS_ANDROID = "Android";
+    /**
+     * @memberof cc.sys
+     * @name OS_WINDOWS
+     * @constant
+     * @type {string}
+     */
+    sys.OS_WINDOWS = "Windows";
+    /**
+     * @memberof cc.sys
+     * @name OS_MARMALADE
+     * @constant
+     * @type {string}
+     */
+    sys.OS_MARMALADE = "Marmalade";
+    /**
+     * @memberof cc.sys
+     * @name OS_LINUX
+     * @constant
+     * @type {string}
+     */
+    sys.OS_LINUX = "Linux";
+    /**
+     * @memberof cc.sys
+     * @name OS_BADA
+     * @constant
+     * @type {string}
+     */
+    sys.OS_BADA = "Bada";
+    /**
+     * @memberof cc.sys
+     * @name OS_BLACKBERRY
+     * @constant
+     * @type {string}
+     */
+    sys.OS_BLACKBERRY = "Blackberry";
+    /**
+     * @memberof cc.sys
+     * @name OS_OSX
+     * @constant
+     * @type {string}
+     */
+    sys.OS_OSX = "OS X";
+    /**
+     * @memberof cc.sys
+     * @name OS_WP8
+     * @constant
+     * @type {string}
+     */
+    sys.OS_WP8 = "WP8";
+    /**
+     * @memberof cc.sys
+     * @name OS_WINRT
+     * @constant
+     * @type {string}
+     */
+    sys.OS_WINRT = "WINRT";
+    /**
+     * @memberof cc.sys
+     * @name OS_UNKNOWN
+     * @constant
+     * @type {string}
+     */
+    sys.OS_UNKNOWN = "Unknown";
+
+    /**
+     * @memberof cc.sys
+     * @name UNKNOWN
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.UNKNOWN = 0;
+    /**
+     * @memberof cc.sys
+     * @name IOS
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IOS = 1;
+    /**
+     * @memberof cc.sys
+     * @name ANDROID
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.ANDROID = 2;
+    /**
+     * @memberof cc.sys
+     * @name WIN32
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WIN32 = 3;
+    /**
+     * @memberof cc.sys
+     * @name MARMALADE
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MARMALADE = 4;
+    /**
+     * @memberof cc.sys
+     * @name LINUX
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LINUX = 5;
+    /**
+     * @memberof cc.sys
+     * @name BADA
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.BADA = 6;
+    /**
+     * @memberof cc.sys
+     * @name BLACKBERRY
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.BLACKBERRY = 7;
+    /**
+     * @memberof cc.sys
+     * @name MACOS
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MACOS = 8;
+    /**
+     * @memberof cc.sys
+     * @name NACL
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.NACL = 9;
+    /**
+     * @memberof cc.sys
+     * @name EMSCRIPTEN
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.EMSCRIPTEN = 10;
+    /**
+     * @memberof cc.sys
+     * @name TIZEN
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.TIZEN = 11;
+    /**
+     * @memberof cc.sys
+     * @name QT5
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.QT5 = 12;
+    /**
+     * @memberof cc.sys
+     * @name WP8
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WP8 = 13;
+    /**
+     * @memberof cc.sys
+     * @name WINRT
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WINRT = 14;
+    /**
+     * @memberof cc.sys
+     * @name MOBILE_BROWSER
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MOBILE_BROWSER = 100;
+    /**
+     * @memberof cc.sys
+     * @name DESKTOP_BROWSER
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.DESKTOP_BROWSER = 101;
+
+    sys.BROWSER_TYPE_WECHAT = "wechat";
+    sys.BROWSER_TYPE_ANDROID = "androidbrowser";
+    sys.BROWSER_TYPE_IE = "ie";
+    sys.BROWSER_TYPE_QQ = "qqbrowser";
+    sys.BROWSER_TYPE_MOBILE_QQ = "mqqbrowser";
+    sys.BROWSER_TYPE_UC = "ucbrowser";
+    sys.BROWSER_TYPE_360 = "360browser";
+    sys.BROWSER_TYPE_BAIDU_APP = "baiduboxapp";
+    sys.BROWSER_TYPE_BAIDU = "baidubrowser";
+    sys.BROWSER_TYPE_MAXTHON = "maxthon";
+    sys.BROWSER_TYPE_OPERA = "opera";
+    sys.BROWSER_TYPE_OUPENG = "oupeng";
+    sys.BROWSER_TYPE_MIUI = "miuibrowser";
+    sys.BROWSER_TYPE_FIREFOX = "firefox";
+    sys.BROWSER_TYPE_SAFARI = "safari";
+    sys.BROWSER_TYPE_CHROME = "chrome";
+    sys.BROWSER_TYPE_LIEBAO = "liebao";
+    sys.BROWSER_TYPE_QZONE = "qzone";
+    sys.BROWSER_TYPE_SOUGOU = "sogou";
+    sys.BROWSER_TYPE_UNKNOWN = "unknown";
+
+    /**
+     * Is native ? This is set to be true in jsb auto.
+     * @memberof cc.sys
+     * @name isNative
+     * @type {Boolean}
+     */
+    sys.isNative = false;
+
+    var browserSupportWebGL = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    var osSupportWebGL = [sys.OS_IOS, sys.OS_WINDOWS, sys.OS_OSX, sys.OS_LINUX];
+    var multipleAudioWhiteList = [
+        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
+        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
+    ];
+
+    var win = window, nav = win.navigator, doc = document, docEle = doc.documentElement;
+    var ua = nav.userAgent.toLowerCase();
+
+    /**
+     * Indicate whether system is mobile system
+     * @memberof cc.sys
+     * @name isMobile
+     * @type {Boolean}
+     */
+    sys.isMobile = ua.indexOf('mobile') !== -1 || ua.indexOf('android') !== -1;
+
+    /**
+     * Indicate the running platform
+     * @memberof cc.sys
+     * @name platform
+     * @type {Number}
+     */
+    sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
+
+    var browserType = sys.BROWSER_TYPE_UNKNOWN;
+    var browserTypes = ua.match(/sogou|qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
+        || ua.match(/chrome|safari/i);
+    if (browserTypes && browserTypes.length > 0) {
+        browserType = browserTypes[0];
+        if (browserType === 'micromessenger') {
+            browserType = sys.BROWSER_TYPE_WECHAT;
+        } else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
+            browserType = sys.BROWSER_TYPE_ANDROID;
+        else if (browserType === "trident") browserType = sys.BROWSER_TYPE_IE;
+        else if (browserType === "360 aphone") browserType = sys.BROWSER_TYPE_360;
+    }else if(ua.indexOf("iphone") && ua.indexOf("mobile")){
+        browserType = "safari";
+    }
+    /**
+     * Indicate the running browser type
+     * @memberof cc.sys
+     * @name browserType
+     * @type {String}
+     */
+    sys.browserType = browserType;
+
+    // Get the os of system
+    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
+    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+    var osName = sys.OS_UNKNOWN;
+    if (nav.appVersion.indexOf("Win") !== -1) osName = sys.OS_WINDOWS;
+    else if (iOS) osName = sys.OS_IOS;
+    else if (nav.appVersion.indexOf("Mac") !== -1) osName = sys.OS_OSX;
+    else if (nav.appVersion.indexOf("X11") !== -1 && nav.appVersion.indexOf("Linux") === -1) osName = sys.OS_UNIX;
+    else if (isAndroid) osName = sys.OS_ANDROID;
+    else if (nav.appVersion.indexOf("Linux") !== -1) osName = sys.OS_LINUX;
+
+    /**
+     * Indicate the running os name
+     * @memberof cc.sys
+     * @name os
+     * @type {String}
+     */
+    sys.os = osName;
+
+    /**
+     * cc.sys.localStorage is a local storage component.
+     * @memberof cc.sys
+     * @name localStorage
+     * @type {Object}
+     */
+    try {
+        var localStorage = sys.localStorage = win.localStorage;
+        localStorage.setItem("storage", "");
+        localStorage.removeItem("storage");
+        localStorage = null;
+    } catch (e) {
+        if (e.name === "SECURITY_ERR" || e.name === "QuotaExceededError") {
+            kk.warn("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+        }
+        sys.localStorage = function () {
+        };
+    }
+
+    var capabilities = sys.capabilities = {"canvas": true};
+    if (docEle['ontouchstart'] !== undefined || doc['ontouchstart'] !== undefined || nav.msPointerEnabled)
+        capabilities["touches"] = true;
+    if (docEle['onmouseup'] !== undefined)
+        capabilities["mouse"] = true;
+    if (docEle['onkeyup'] !== undefined)
+        capabilities["keyboard"] = true;
+    if (win.DeviceMotionEvent || win.DeviceOrientationEvent)
+        capabilities["accelerometer"] = true;
+
+    /**
+     * Dump system informations
+     * @memberof cc.sys
+     * @name dump
+     * @function
+     */
+    sys.dump = function () {
+        var self = this;
+        var str = "";
+        str += "isMobile : " + self.isMobile + "\r\n";
+        str += "browserType : " + self.browserType + "\r\n";
+        str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
+        str += "os : " + self.os + "\r\n";
+        str += "platform : " + self.platform + "\r\n";
+        kk.log(str);
+    }
+
+    /**
+     * Open a url in browser
+     * @memberof cc.sys
+     * @name openURL
+     * @param {String} url
+     */
+    sys.openURL = function(url){
+        window.open(url);
+    }
+};
+//+++++++++++++++++++++++++something about sys end+++++++++++++++++++++++++++++
+
 kk.game = {
+    EVENT_HIDE: "game_on_hide",
+    EVENT_SHOW: "game_on_show",
+    _eventHide: null,
+    _eventShow: null,
     CONFIG_KEY: {
         engineDir : "engineDir",
         showFPS: "showFPS",
         id: "id",
-        jsList: "jsList"
+        jsList: "jsList",
+        classReleaseMode: "classReleaseMode"
     },
     _prepareCalled: false,//whether the prepare function has been called
     _prepared: false,//whether the engine has prepared
+    _paused: true,//whether the game is paused
+    _intervalId: null,//interval target of main
     config:null,
     run: function (id) {
         var self = this;
@@ -990,7 +1430,12 @@ kk.game = {
             }
             self._checkPrepare = setInterval(function () {
                 if (self._prepared) {
-                    self.init();
+                    self._init();
+                    self._mainLoop();
+                    self._eventHide = self._eventHide || new kk.EventCustom(self.EVENT_HIDE);
+                    self._eventHide.setUserData(self);
+                    self._eventShow = self._eventShow || new kk.EventCustom(self.EVENT_SHOW);
+                    self._eventShow.setUserData(self);
                     self.onStart();
                     clearInterval(self._checkPrepare);
                 }
@@ -1003,13 +1448,77 @@ kk.game = {
                 _run();
             }, false);
     },
-    init:function(){
-        kk.hammer = new Hammer(document.getElementById(kk.game.config["id"]));
+    _init:function(){
+        var ele = document.getElementById(kk.game.config["id"]);
+        ele.oncontextmenu = function () {
+            return false;
+        };
+        this._setAnimFrame();
+        kk.director.init();
+
+        kk.hammer = new Hammer(ele);
+        kk.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
         kk.hammer.on("tap", function (e) {
             var touchEvent = new kk.EventTouch(e);
             touchEvent._eventCode = kk.EventTouch.EventCode.TAP;
             kk.eventManager.dispatchEvent(touchEvent);
         });
+        kk.hammer.on("pan panstart panmove panend", function (e) {
+            var touchEvent = new kk.EventTouch(e);
+            touchEvent._eventCode = kk.EventTouch.EventCode.PAN;
+            kk.eventManager.dispatchEvent(touchEvent);
+        });
+    },
+    _setAnimFrame: function () {
+        this._lastTime = new Date();
+        this._frameTime = 1000 / 60;
+        if((kk.sys.os === kk.sys.OS_IOS && kk.sys.browserType === kk.sys.BROWSER_TYPE_WECHAT)) {
+            window.requestAnimFrame = this._stTime;
+            window.cancelAnimationFrame = this._ctTime;
+        }
+        else {
+            window.requestAnimFrame = window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            this._stTime;
+            window.cancelAnimationFrame = window.cancelAnimationFrame ||
+            window.cancelRequestAnimationFrame ||
+            window.msCancelRequestAnimationFrame ||
+            window.mozCancelRequestAnimationFrame ||
+            window.oCancelRequestAnimationFrame ||
+            window.webkitCancelRequestAnimationFrame ||
+            window.msCancelAnimationFrame ||
+            window.mozCancelAnimationFrame ||
+            window.webkitCancelAnimationFrame ||
+            window.oCancelAnimationFrame ||
+            this._ctTime;
+        }
+    },
+    _stTime: function(callback){
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, kk.game._frameTime - (currTime - kk.game._lastTime));
+        var id = window.setTimeout(function() { callback(); },
+            timeToCall);
+        kk.game._lastTime = currTime + timeToCall;
+        return id;
+    },
+    _ctTime: function(id){
+        window.clearTimeout(id);
+    },
+    _mainLoop:function () {
+        var self = this;
+        var callback = function () {
+            if (!self._paused) {
+                kk.director.mainLoop();
+                if(self._intervalId)
+                    window.cancelAnimationFrame(self._intervalId);
+                self._intervalId = window.requestAnimFrame(callback);
+            }
+        };
+        window.requestAnimFrame(callback);
+        self._paused = false;
     },
     _initConfig: function () {
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
@@ -1047,8 +1556,7 @@ kk.game = {
                 self.config = _init({});
             }
         }
-        //init debug move to CCDebugger
-        //kk._initSys(self.config, CONFIG_KEY);
+        kk._initSys();
     },
     //cache for js and module that has added into jsList to be loaded.
     _jsAddedCache: {},

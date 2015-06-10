@@ -300,12 +300,12 @@ kk.EventListener.create = function(argObj){
     var listener = null;
     if(listenerType === kk.EventListener.TOUCH)
         listener = new kk._EventListenerTouch();
-    /*
     else if(listenerType === kk.EventListener.CUSTOM){
         listener = new kk._EventListenerCustom(argObj.eventName, argObj.callback);
         delete argObj.eventName;
         delete argObj.callback;
-    } else if(listenerType === kk.EventListener.KEYBOARD)
+    }
+    /* else if(listenerType === kk.EventListener.KEYBOARD)
         listener = new kk._EventListenerKeyboard();
     else if(listenerType === kk.EventListener.ACCELERATION){
         listener = new kk._EventListenerAcceleration(argObj.callback);

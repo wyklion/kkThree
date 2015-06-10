@@ -44,6 +44,7 @@ kk.eventManager = {
         var listeners = this._listenersMap[listenerID];
         if (!listeners) {
             listeners = [];
+            listeners.gt0Index=0;
             this._listenersMap[listenerID] = listeners;
         }
         listeners.push(listener);
@@ -199,7 +200,6 @@ kk.eventManager = {
         event._setCurrentTarget(listener._node);
 
         var getCode = event.getEventCode(), eventCode = kk.EventTouch.EventCode;
-
         if (getCode === eventCode.TAP && listener.onTap) {
             listener.onTap(hammerEvent);
         }else if(getCode === eventCode.PAN && listener.onPan){
@@ -273,8 +273,7 @@ kk.eventManager = {
 
     _dispatchEventToListeners: function (listeners, onEvent, eventOrArgs) {
         var shouldStopPropagation = false;
-
-        var i = 0, j, selListener;
+        var i = 0, selListener;
         if (listeners && listeners.length !== 0){
             for (; i < listeners.gt0Index; ++i) {
                 selListener = listeners[i];
