@@ -106,7 +106,9 @@
       "event/hammer.js",
       "event/KKEvent.js",
       "event/KKEventListener.js",
-      "event/KKEventManager.js"
+      "event/KKEventManager.js",
+      "menu/DLabel.js",
+      "menu/KKMenu.js"
     ],
     "extras" : [
       "extras/GeometryUtils.js",

@@ -235,6 +235,8 @@ kk._EventListenerTouch = kk.EventListener.extend({
     swallowTouches: false,
     onTap:null,
     onPan:null,
+    onRotate:null,
+    onPress:null,
     /*
     onPanStart:null,
     onPanMove:null,
@@ -257,12 +259,14 @@ kk._EventListenerTouch = kk.EventListener.extend({
         var eventListener = new kk._EventListenerTouch();
         eventListener.onTap = this.onTap;
         eventListener.onPan = this.onPan;
+        eventListener.onRotate = this.onRotate;
+        eventListener.onPress = this.onPress;
         eventListener.swallowTouches = this.swallowTouches;
         return eventListener;
     },
 
     checkAvailable: function () {
-        if(!this.onTap && !this.onPan){
+        if(!this.onTap && !this.onPan && !this.onRotate && !this.onPress){
             return false;
         }
         return true;

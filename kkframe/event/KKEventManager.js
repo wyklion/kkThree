@@ -204,6 +204,10 @@ kk.eventManager = {
             listener.onTap(hammerEvent);
         }else if(getCode === eventCode.PAN && listener.onPan){
             listener.onPan(hammerEvent);
+        }else if(getCode === eventCode.ROTATE && listener.onRotate){
+            listener.onRotate(hammerEvent);
+        }else if(getCode === eventCode.PRESS && listener.onPress){
+            listener.onPress(hammerEvent);
         }
 
         // If the event was stopped, return directly.
@@ -250,7 +254,7 @@ kk.eventManager = {
 
         this._updateListeners(event);
     },
-
+    /*
     _onTouchesEventCallback: function (listener, callbackParams) {
         // Skip if the listener was removed.
         if (!listener._registered)
@@ -262,6 +266,10 @@ kk.eventManager = {
             listener.onTap(hammerEvent);
         else if(getCode === eventCode.PAN && listener.onPan)
             listener.onPan(hammerEvent);
+        else if(getCode === eventCode.ROTATE && listener.onRotate)
+            listener.onRotate(hammerEvent);
+        else if(getCode === eventCode.PRESS && listener.onPress)
+            listener.onPress(hammerEvent);
 
         // If the event was stopped, return directly.
         if (event.isStopped()) {
@@ -269,7 +277,7 @@ kk.eventManager = {
             return true;
         }
         return false;
-    },
+    },*/
 
     _dispatchEventToListeners: function (listeners, onEvent, eventOrArgs) {
         var shouldStopPropagation = false;
@@ -337,7 +345,6 @@ kk.eventManager = {
         var isFound, locListener = this._listenersMap;
         for (var selKey in locListener) {
             var listeners = locListener[selKey];
-            var fixedPriorityListeners = listeners.getFixedPriorityListeners()
 
             isFound = this._removeListenerInArray(listeners, listener);
             if (isFound)

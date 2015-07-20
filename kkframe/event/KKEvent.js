@@ -169,4 +169,4 @@ kk.EventTouch = kk.Event.extend({
  */
 kk.EventTouch.MAX_TOUCHES = 5;
 
-kk.EventTouch.EventCode = {TAP: 0, PAN: 1};
+kk.EventTouch.EventCode = {TAP: 0, PAN: 1, ROTATE: 2, PRESS: 3};

@@ -3,6 +3,8 @@
  */
 var kk = kk || {};
 
+var d = d || {};
+
 kk.log = function(){
     return console.log.apply(console, arguments);
 };
@@ -1457,15 +1459,27 @@ kk.game = {
         kk.director.init();
 
         kk.hammer = new Hammer(ele);
+        kk.hammer.get('rotate').set({ enable: true });
         kk.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        kk.hammer.get('press').set({ time: 0 });
         kk.hammer.on("tap", function (e) {
             var touchEvent = new kk.EventTouch(e);
             touchEvent._eventCode = kk.EventTouch.EventCode.TAP;
             kk.eventManager.dispatchEvent(touchEvent);
         });
+        kk.hammer.on("press pressup", function (e) {
+            var touchEvent = new kk.EventTouch(e);
+            touchEvent._eventCode = kk.EventTouch.EventCode.PRESS;
+            kk.eventManager.dispatchEvent(touchEvent);
+        });
         kk.hammer.on("pan panstart panmove panend", function (e) {
             var touchEvent = new kk.EventTouch(e);
             touchEvent._eventCode = kk.EventTouch.EventCode.PAN;
+            kk.eventManager.dispatchEvent(touchEvent);
+        });
+        kk.hammer.on("rotate rotatestart rotatemove rotateend", function (e) {
+            var touchEvent = new kk.EventTouch(e);
+            touchEvent._eventCode = kk.EventTouch.EventCode.ROTATE;
             kk.eventManager.dispatchEvent(touchEvent);
         });
     },
