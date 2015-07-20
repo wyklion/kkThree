@@ -103,6 +103,7 @@
       "base/KKClass.js",
       "base/KKScheduler.js",
       "base/KKDirector.js",
+      "controls/RotateControl.js",
       "event/hammer.js",
       "event/KKEvent.js",
       "event/KKEventListener.js",
